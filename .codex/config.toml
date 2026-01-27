@@ -1,0 +1,39 @@
+# IA-CRM v2 — Project Codex config
+# Loaded only when the project is trusted by Codex.
+
+# Default model used by Codex
+model = "gpt-5.2"
+
+# Default safety posture
+approval_policy = "auto"
+sandbox_mode = "workspace-write"
+model_reasoning_effort = "medium"
+
+[shell_environment_policy]
+include_only = ["PATH", "HOME"]
+
+[features]
+shell_snapshot = true
+undo = true
+exec_policy = true
+
+# --- Agent profiles (pyramid) ---
+[profiles.spec]
+sandbox_mode = "read-only"
+approval_policy = "never"
+model_reasoning_effort = "high"
+
+[profiles.build]
+sandbox_mode = "workspace-write"
+approval_policy = "auto"
+model_reasoning_effort = "medium"
+
+[profiles.qa]
+sandbox_mode = "read-only"
+approval_policy = "never"
+model_reasoning_effort = "high"
+
+[profiles.release]
+sandbox_mode = "read-only"
+approval_policy = "never"
+model_reasoning_effort = "medium"
