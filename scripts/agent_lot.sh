@@ -3,6 +3,7 @@ set -euo pipefail
 
 LOT_ID="${1:-}"
 GOAL="${2:-}"
+
 if [[ -z "$LOT_ID" || -z "$GOAL" ]]; then
   echo "Usage: $0 <LOT_ID> <GOAL>"
   exit 1

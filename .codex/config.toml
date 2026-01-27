@@ -1,10 +1,8 @@
 # IA-CRM v2 — Project Codex config
 # Loaded only when the project is trusted by Codex.
 
-# Default model used by Codex
 model = "gpt-5.2"
 
-# Default safety posture
 approval_policy = "auto"
 sandbox_mode = "workspace-write"
 model_reasoning_effort = "medium"
