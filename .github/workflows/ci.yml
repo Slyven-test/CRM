@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repo sanity
+        run: |
+          test -f AGENTS.md
+          test -d docs/packs
+          ls -la docs/packs
+
+  backend:
+    runs-on: ubuntu-latest
+    needs: sanity
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip if no backend
+        run: |
+          if [ ! -d backend ]; then echo "No backend yet, skipping."; exit 0; fi
+      - name: Backend placeholder
+        run: echo "Backend detected. Add pytest later." && exit 0
+
+  frontend:
+    runs-on: ubuntu-latest
+    needs: sanity
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip if no frontend
+        run: |
+          if [ ! -d frontend ]; then echo "No frontend yet, skipping."; exit 0; fi
+      - name: Frontend placeholder
+        run: echo "Frontend detected. Add npm build later." && exit 0
