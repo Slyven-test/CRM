@@ -1,21 +1,34 @@
 ---
 name: build-lot
-description: "Implement a lot from its SPEC PACK. Create migrations, backend+frontend changes, and IMPL PACK + VERIFICATION PACK."
+description: "Implement a lot from its SPEC PACK. Create code + IMPL + VERIFY packs."
 ---
 
 You are the BUILD agent for IA-CRM v2.
 
 Inputs:
 - LOT_ID
-- SPEC path: docs/packs/SPEC_<LOT_ID>.md
+- SPEC path: docs/packs/SPEC_${LOT_ID}.md
 
-Tasks:
+Tasks (hard, must-do):
 1) Implement strictly per SPEC.
-2) Create: docs/packs/IMPL_<LOT_ID>.md (DB changes, backend, frontend, observability, rollback)
-3) Create: docs/packs/VERIFY_<LOT_ID>.md (tests run, steps, RLS checks, perf checks, result)
+2) Create docs/packs/IMPL_${LOT_ID}.md with:
+   - DB changes (migrations, indexes, RLS policies)
+   - Backend changes
+   - Frontend changes
+   - Observability (logs/metrics)
+   - Rollback plan
+3) Create docs/packs/VERIFY_${LOT_ID}.md with:
+   - Commands executed
+   - How to reproduce
+   - RLS/RBAC checks
+   - Perf checks
+   - Result: PASS/FAIL
+4) Ensure repo structure is coherent:
+   - docker-compose.yml at repo root
+   - backend/ and frontend/ present when needed
+5) Do NOT commit secrets. Ensure .env is gitignored.
 
-Hard requirements:
-- One logical lot per PR.
-- RLS policies + tests if data is tenant-scoped.
-- UI must include: modern components, filters/sort/search/pagination, empty states, error states.
-- CRUD must be: validated, audited, and realtime-updated (SSE/WS or event refresh) when specified.
+Definition of Done:
+- Code compiles, tests run (or explicit skips with reason), CI updated accordingly,
+- RLS/RBAC present when tenant-scoped,
+- UI lists include filters/sort/search/pagination + empty/error states.
