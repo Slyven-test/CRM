@@ -1,6 +1,7 @@
 model = "gpt-5.2"
 
-approval_policy = "auto"
+# Global defaults
+approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 model_reasoning_effort = "medium"
 
@@ -12,6 +13,7 @@ shell_snapshot = true
 undo = true
 exec_policy = true
 
+# --- Agent profiles (pyramid) ---
 [profiles.spec]
 sandbox_mode = "read-only"
 approval_policy = "never"
@@ -19,7 +21,7 @@ model_reasoning_effort = "high"
 
 [profiles.build]
 sandbox_mode = "workspace-write"
-approval_policy = "auto"
+approval_policy = "on-request"
 model_reasoning_effort = "medium"
 
 [profiles.qa]
