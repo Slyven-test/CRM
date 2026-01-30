@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOT_ID="${1:-}"
 GOAL="${2:-}"
 
@@ -9,25 +10,27 @@ if [[ -z "$LOT_ID" || -z "$GOAL" ]]; then
   exit 1
 fi
 
-# Avoid Codex mistakenly using a broken API key from environment
-unset OPENAI_API_KEY
+# IMPORTANT: évite que OPENAI_API_KEY (même invalide) casse l'auth ChatGPT
+unset OPENAI_API_KEY || true
+
+mkdir -p "$ROOT/docs/packs"
 
 # 1) SPEC
-codex exec --profile spec \
-  "Use skill spec-pack. LOT_ID=${LOT_ID}. Goal: ${GOAL}"
+codex exec -C "$ROOT" --full-auto \
+  "Use skill spec-pack. LOT_ID=$LOT_ID. Goal: $GOAL"
 
-# 2) BUILD (no approvals, workspace-write)
-codex exec --profile build \
-  "Use skill build-lot. LOT_ID=${LOT_ID}. Implement strictly from docs/packs/SPEC_${LOT_ID}.md"
+# 2) BUILD
+codex exec -C "$ROOT" --full-auto \
+  "Use skill build-lot. LOT_ID=$LOT_ID. Implement from docs/packs/SPEC_${LOT_ID}.md"
 
 # 3) SECURITY
-codex exec --profile qa \
-  "Use skill security-review. LOT_ID=${LOT_ID}. Audit security/isolation and write docs/packs/SECURITY_${LOT_ID}.md"
+codex exec -C "$ROOT" --full-auto \
+  "Use skill security-review. LOT_ID=$LOT_ID."
 
 # 4) QA
-codex exec --profile qa \
-  "Use skill qa-review. LOT_ID=${LOT_ID}. Check SPEC compliance + tests + UX requirements. Write docs/packs/QA_${LOT_ID}.md"
+codex exec -C "$ROOT" --full-auto \
+  "Use skill qa-review. LOT_ID=$LOT_ID."
 
-# 5) RELEASE PR PACK
-codex exec --profile release \
-  "Use skill release-pr. LOT_ID=${LOT_ID}. Create docs/packs/PR_${LOT_ID}.md"
+# 5) RELEASE NOTE
+codex exec -C "$ROOT" --full-auto \
+  "Use skill release-pr. LOT_ID=$LOT_ID."
