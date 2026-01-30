@@ -1,0 +1,15 @@
+# Codex Rules — command execution policy
+# Deny destructive / host-level commands
+
+deny:
+  - "rm -rf /"
+  - "rm -rf /*"
+  - "mkfs.*"
+  - "dd if=.* of=/dev/.*"
+  - "shutdown.*"
+  - "reboot.*"
+  - "systemctl.*"
+  - "service .*"
+  - "iptables.*"
+  - "ufw .*"
+  - "sudo .*"

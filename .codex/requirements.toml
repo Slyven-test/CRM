@@ -1,0 +1,5 @@
+# Guardrails enforced for this repo
+# (example: disallow dangerous sandbox mode)
+
+[forbid]
+sandbox_mode = ["danger-full-access"]
