@@ -5,6 +5,18 @@ on:
   pull_request:
 
 jobs:
+  packs:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch base ref
+        run: git fetch origin "${GITHUB_BASE_REF}" --depth=1
+      - name: Check packs
+        run: ./scripts/ci/check_packs.sh "origin/${GITHUB_BASE_REF}"
+
   backend:
     runs-on: ubuntu-latest
     defaults:
