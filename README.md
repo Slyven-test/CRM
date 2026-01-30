@@ -15,6 +15,18 @@
 ## Verification
 - `./scripts/verify.sh`
 
+## Delivery workflow (packs)
+Every PR is expected to include “packs” under `docs/packs/`:
+- `docs/packs/SPEC_<LOT_ID>.md`
+- `docs/packs/IMPL_<LOT_ID>.md`
+- `docs/packs/VERIFICATION_<LOT_ID>.md`
+
+CI enforces pack presence on pull requests. You can run the same check locally:
+- `./scripts/ci/check_packs.sh origin/main`
+
+If you don't have the base ref locally, fetch it:
+- `git fetch origin main --depth=1`
+
 ## Configuration
 - Compose service ports: `POSTGRES_PORT`, `REDIS_PORT`, `API_PORT`
 - API settings: `ENVIRONMENT`, `DATABASE_URL`, `REDIS_URL`, `CORS_ORIGINS` (comma-separated)

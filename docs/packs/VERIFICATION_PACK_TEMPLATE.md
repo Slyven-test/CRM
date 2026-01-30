@@ -1,7 +1,9 @@
-# VERIFICATION PACK — <LOT / FEATURE>
+# VERIFICATION PACK — <LOT_ID>
 
-## Tests executed
-## How to reproduce
-## RLS / security checks
-## Performance checks
+## Commands executed
+
+## Expected outputs
+
+## RLS / RBAC / security checks
+
 ## Result (PASS/FAIL + CI link)
