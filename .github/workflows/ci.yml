@@ -22,16 +22,63 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ia_crm
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d ia_crm"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install psql
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
       - name: Install
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev]"
+      - name: Prepare database (ia_app role)
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d ia_crm -v ON_ERROR_STOP=1 <<'SQL'
+          DO $$
+          BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'ia_app') THEN
+              CREATE ROLE ia_app LOGIN PASSWORD 'ia_app';
+            END IF;
+          END
+          $$;
+
+          GRANT ALL PRIVILEGES ON DATABASE ia_crm TO ia_app;
+          GRANT USAGE, CREATE ON SCHEMA public TO ia_app;
+
+          ALTER DEFAULT PRIVILEGES IN SCHEMA public
+          GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO ia_app;
+
+          ALTER DEFAULT PRIVILEGES IN SCHEMA public
+          GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO ia_app;
+          SQL
+      - name: Migrate
+        env:
+          DATABASE_URL: postgresql+asyncpg://ia_app:ia_app@localhost:5432/ia_crm
+        run: alembic upgrade head
       - name: Test
+        env:
+          DATABASE_URL: postgresql+asyncpg://ia_app:ia_app@localhost:5432/ia_crm
+          BOOTSTRAP_TOKEN: ci-bootstrap-token
         run: pytest
 
   frontend:
