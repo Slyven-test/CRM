@@ -5,6 +5,8 @@
 - `cp .env.example .env` (optional overrides)
 - `docker compose up --build`
 - API: `http://localhost:8000/health`
+- Liveness: `curl -sS http://localhost:8000/health`
+- Worker task (in another terminal): `docker compose exec -T api python -c "from app.worker import celery_app; print(celery_app.send_task('tasks.ping').get(timeout=10))"`
 
 ### Frontend
 - `cd frontend`
@@ -12,8 +14,20 @@
 - `npm run dev`
 - App: `http://localhost:5173` (default)
 
+### Backend tests
+- `cd backend`
+- `python -m venv .venv && source .venv/bin/activate`
+- `pip install -e ".[dev]"`
+- `pytest`
+
+### Frontend checks
+- `cd frontend`
+- `npm run typecheck`
+- `npm run build`
+
 ## Verification
 - `./scripts/verify.sh`
+- Optional Docker smoke (starts compose + checks `/health` + runs `tasks.ping`): `RUN_DOCKER_SMOKE=1 ./scripts/verify.sh`
 
 ## Delivery workflow (packs)
 Every PR is expected to include “packs” under `docs/packs/`:
